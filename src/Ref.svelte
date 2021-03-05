@@ -1,24 +1,49 @@
 <script lang="ts">
-  import { createEventDispatcher } from "svelte";
+  import type { SvelteComponent } from "svelte";
+  import RefEditable from "./RefEditable.svelte";
+  import RefView from "./RefView.svelte";
+  import type { PartialReference } from "./shared/reference";
 
-  const dispatch = createEventDispatcher();
+  export let editing = true;
+  export let editable = true;
+  export let codeChangeOnly: boolean = false;
+  export let submittable: boolean = true;
+  let ref: PartialReference;
 
-  import {
-    RepoHumanName,
-    // Reference,
-  } from "../modules/openxr-changelog-reference";
+  interface ComponentAndProps {
+      component: SvelteComponent,
+      props: object,
+  };
+  let components = new Map<boolean, ComponentAndProps>([
+    [
+      true,
+      {
+        component: RefEditable,
+        props: {
+            codeChangeOnly,
+            submittable: submittable && editable
+        }
+      },
+    ],
+    [
+      false,
+      {
+        component: RefView,
+        props: {
+            editable
+        }
+      },
+    ],
+  ]);
 
-  import type { Repo, RefType } from "../modules/openxr-changelog-reference";
-  export let repo: Repo;
-  export let refType: RefType;
-  export let refNumber: number;
+  let active: ComponentAndProps;
+  $: {
+    active = components.get(editing);
+  }
 
-  function sendEditMessage() {
-    dispatch("edit", { repo, refType, refNumber });
+  function handleSave(event) {
+      
   }
 </script>
 
-<span class="repo">{RepoHumanName[repo]}</span>
-<span class="refType">{refType}</span>
-<span class="refNumber">{refNumber}</span>
-<button on:click={sendEditMessage}>Edit</button>
+<svelte:component this={active.component} {...active.props}  {...ref} on:saved={handleSave} />

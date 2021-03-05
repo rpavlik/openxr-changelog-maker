@@ -1,7 +1,8 @@
 <script lang="ts">
-  import type { Repo, RefType } from "./reference";
-  import Ref from "./Ref.svelte";
+  import type { Repo, RefType } from "./shared/reference";
+  import RefView from "./RefView.svelte";
   import RefEditable from "./RefEditable.svelte";
+  import Ref from './Ref.svelte'
 
   export let name: string;
   let repo: Repo;
@@ -14,7 +15,7 @@
   <p>
     Where is your change being submitted?
   </p>
-  <RefEditable codeChangeOnly={true} {repo} />
+  <Ref codeChangeOnly={true} {repo} />
 </main>
 
 <style>

@@ -8,20 +8,29 @@
     AllRepos,
     CodeChangeRefType,
     RefTypes,
-    ValidRefTypes,
-    isReferenceValid
+    ValidRefTypes,PartialReference,
+    isReferenceValid,
   } from "./shared/reference";
 
   import type { Repo, RefType } from "./shared/reference";
   export let codeChangeOnly: boolean = false;
   export let repo: Repo | null = null;
   export let submittable: boolean = true;
-  let refType: RefType | null;
+  export let refType: RefType | null;
 
+  $: {
+    if (codeChangeOnly) {
+      if (repo) {
+        refType = CodeChangeRefType[repo];
+      } else {
+        refType = "Pull Request";
+      }
+    }
+  }
   let valid: boolean = false;
-  $: valid = isReferenceValid({repo, refType, refNumber})
-  
-  let refNumber: number | null = null;
+  $: valid = isReferenceValid({ repo, refType, refNumber });
+
+  export let refNumber: number | null = null;
 
   function save() {
     dispatch("saved", { repo, refType, refNumber });
@@ -58,9 +67,9 @@
     </select>
   {/if}
 
-  <label for="refnum">{refType ? refType : ""} number:</label>
+  <label for="refnum">Number:</label>
   <input type="number" min="01" id="refnum" bind:value={refNumber} />
   {#if submittable}
-    <button type="submit" on:click>Confirm</button>
+    <button type="submit" disabled={!valid} on:click>Confirm</button>
   {/if}
 </form>
