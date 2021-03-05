@@ -1,23 +1,25 @@
 {
   "include": [
-    "src/**/*"
+    "index.ts",
+    "reference.ts"
   ],
   "exclude": [
     "node_modules/*",
   ],
   "compilerOptions": {
     "composite": true,
+    "declaration": true,
     "declarationMap": true,
-    "target": "ES5",
-    "module": "ESNext",
+    "outFile": "build/openxr-changelog-reference.js",
+    "module": "system",
+    "rootDir": ".",
+    "target": "ES2019",
     "allowJs": true,
-    "noEmit": true,
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "lib": [
-      "DOM",
       "ES2019"
     ]
   }

@@ -86,6 +86,12 @@ export interface GeneralReference {
     refNumber: number
 }
 
+export interface PartialReference {
+    repo: Repo | null,
+    refType: RefType | null,
+    refNumber: number | null
+}
+
 export const AllRepos = Object.values(Repos);
 
 export const getMostSimilarRefTypeForRepo = (repo: Repo, origRefType: RefType): RefType =>
@@ -112,7 +118,7 @@ export const ValidRefTypes: { [index in Repo]: Set<RefType> } = (() => {
     return Object.fromEntries(pairs) as { [index in Repo]: Set<RefType> };
 })();
 
-export function isReferenceValid (ref: GeneralReference): boolean {
+export function isReferenceValid (ref: PartialReference): boolean {
     if (!ref.repo || !ref.refType || !ref.refNumber) {
         return false;
     }
