@@ -9,7 +9,6 @@ import postcss from 'rollup-plugin-postcss';
 import resolve from '@rollup/plugin-node-resolve';
 import styles from "rollup-plugin-styles";
 import svelte from 'rollup-plugin-svelte';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -86,18 +85,11 @@ export default {
 
 		
 		production && babel({
+			
 			extensions: ['.js', '.mjs', '.html', '.svelte'],
+			
 			babelHelpers: 'runtime',
-			exclude: ['node_modules/@babel/**', 'node_modules/core-js/**'],
-			presets: [
-				[
-					'@babel/preset-env',
-					{
-						useBuiltIns: 'usage',
-						corejs: "3.9.1"
-					}
-				]
-			],
+			
 			plugins: [
 				// '@babel/plugin-syntax-dynamic-import',
 				[

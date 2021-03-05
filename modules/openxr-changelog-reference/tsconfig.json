@@ -13,7 +13,7 @@
     "outFile": "build/openxr-changelog-reference.js",
     "module": "system",
     "rootDir": ".",
-    "target": "ES2019",
+    "target": "ES6",
     "allowJs": true,
     "strict": true,
     "moduleResolution": "node",

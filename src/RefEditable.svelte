@@ -6,13 +6,12 @@
   import {
     RepoHumanName,
     AllRepos,
-    Reference,
     CodeChangeRefType,
     RefTypes,
     ValidRefTypes,
-  } from "./reference";
+  } from "../modules/openxr-changelog-reference";
 
-  import type { Repo, RefType } from "./reference";
+  import type { Repo, RefType } from "../modules/openxr-changelog-reference";
   export let codeChangeOnly: boolean = false;
   export let repo: Repo | null = null;
   export let submittable: boolean = true;

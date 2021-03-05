@@ -9,9 +9,26 @@
     "public/*"
   ],
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "target": "ES6",
+    "module": "ESNext",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "lib": [
       "DOM",
       "ES2019"
     ]
-  }
+  },
+  "references": [
+    {
+      "path": "modules/openxr-changelog-reference",
+      "prepend": true,
+    }
+  ]
 }

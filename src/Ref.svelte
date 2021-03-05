@@ -6,9 +6,9 @@
   import {
     RepoHumanName,
     // Reference,
-  } from "./reference";
+  } from "../modules/openxr-changelog-reference";
 
-  import type { Repo, RefType } from "./reference";
+  import type { Repo, RefType } from "../modules/openxr-changelog-reference";
   export let repo: Repo;
   export let refType: RefType;
   export let refNumber: number;
