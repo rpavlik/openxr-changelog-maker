@@ -121,3 +121,7 @@ dist
 
 .rollup.cache/
 .vscode/
+*.js
+*.d.ts
+*.d.ts.map
+*.tsbuildinfo
