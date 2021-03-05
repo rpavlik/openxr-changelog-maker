@@ -14,25 +14,29 @@
   import type { PartialReference } from "./shared/reference";
   export let codeChangeOnly: boolean = false;
   export let submittable: boolean = true;
-  export let ref: PartialReference = {
-    repo: null,
-    refType: null,
-    refNumber: null,
-  };
+  export let ref: PartialReference = {};
+  export let allowSuffix: boolean = false;
+  // let codeChangeRef: RefType;
+  const getCodeChangeRef = () =>
+    ref.repo ? CodeChangeRefType[ref.repo] : "pr";
+
+  //   repo: null,
+  //   refType: null,
+  //   refNumber: null,
+  // };
   $: {
     if (codeChangeOnly) {
-      if (ref.repo) {
-        ref.refType = CodeChangeRefType[ref.repo];
-      } else {
-        ref.refType = "Pull Request";
-      }
+      ref.refType = getCodeChangeRef();
     }
   }
   let valid: boolean = false;
   $: valid = isReferenceValid(ref);
+  $: {
+    if (!allowSuffix) ref.suffix = null;
+  }
   function save() {
     console.log("dispatching saved event:", ref);
-    dispatch("saved", {ref});
+    dispatch("saved", { ref });
   }
 </script>
 
@@ -53,21 +57,29 @@
     <label for="reftype-select">Choose a reference type:</label>
     <select id="reftype-select" bind:value={ref.refType}>
       <option value={null}>none selected</option>
-      <option value={RefTypes.Issue} selected={RefTypes.Issue == ref.refType}
-        >{RefTypes.Issue}</option
-      >
+      <option value={RefTypes.Issue} selected={RefTypes.Issue == ref.refType}>
+        {RefTypes.Issue}
+      </option>
       {#if ref.repo}
         <option
           value={CodeChangeRefType[ref.repo]}
           selected={CodeChangeRefType[ref.repo] == ref.refType}
-          >{CodeChangeRefType[ref.repo]}</option
         >
+          {CodeChangeRefType[ref.repo]}
+        </option>
       {/if}
     </select>
   {/if}
 
   <label for="refnum">Number:</label>
-  <input type="number" min="01" id="refnum" bind:value={ref.refNumber} />
+  <input type="number" min="1" id="refnum" bind:value={ref.refNumber} />
+
+  {#if allowSuffix}
+    <label for="suffix">
+      Extra suffix (to avoid filename collision, optional):
+    </label>
+    <input id="suffix" bind:value={ref.suffix} />
+  {/if}
   {#if submittable}
     <button type="submit" disabled={!valid} on:click>Confirm</button>
   {/if}

@@ -2,13 +2,20 @@
   import type { SvelteComponent } from "svelte";
   import RefEditable from "./RefEditable.svelte";
   import RefView from "./RefView.svelte";
-  import type { PartialReference } from "./shared/reference";
+  import { normalizeReference } from "./shared/reference";
+  import type {
+    PartialReference,
+    StrictGeneralReference,
+  } from "./shared/reference";
+  import type { RefEvent } from "./types";
 
   export let editing = true;
   export let editable = true;
   export let codeChangeOnly: boolean = false;
   export let submittable: boolean = true;
-  let ref: PartialReference;
+  export let allowSuffix: boolean = false;
+  let ref: PartialReference = {};
+  let normalizedRef: StrictGeneralReference | null = null;
 
   interface ComponentAndProps {
     component: SvelteComponent;
@@ -18,10 +25,11 @@
     codeChangeOnly,
     ref,
     submittable: submittable && editable,
+    allowSuffix,
   };
   let viewerProps = {
     editable,
-    ref,
+    ref: normalizedRef,
   };
   let components = new Map<boolean, ComponentAndProps>([
     [
@@ -45,15 +53,16 @@
     active = components.get(editing);
   }
 
-  function handleSave(event) {
+  function handleSave(event: RefEvent) {
     ref = event.detail.ref;
+    normalizedRef = normalizeReference(ref);
     editing = false;
-    viewerProps.ref = {...ref};
+    viewerProps.ref = { ...normalizedRef };
   }
-  function handleEdit(event) {
+  function handleEdit(event: RefEvent) {
     ref = event.detail.ref;
     editing = true;
-    editorProps.ref = {...ref};
+    editorProps.ref = { ...ref };
   }
 </script>
 

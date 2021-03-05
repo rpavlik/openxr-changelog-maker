@@ -1,117 +1,143 @@
-// enum GitlabRepo {
-//     InternalGitlab = "gl",
 
-// }
-// enum GitHubRepo {
-
-export const RefTypes = {
-    Issue: "Issue",
-    PullRequest: "Pull Request",
-    MergeRequest: "Merge Request"
-} as const;
-
-
-type GitHubRepo = "gh.OpenXR-Docs" | "gh.OpenXR-SDK-Source" | "gh.OpenXR-CTS";
-type GitLabRepo = "gl";
+/**
+ * Known GitHub repos.
+ */
+type GitHubRepo = 'gh.OpenXR-Docs' | 'gh.OpenXR-SDK-Source' | 'gh.OpenXR-CTS';
+/**
+ * Code for GitLab repo
+ */
+type GitLabRepo = 'gl';
+/**
+ * Type for any repo
+ */
 type Repo = GitHubRepo | GitLabRepo;
 export type { GitHubRepo, GitLabRepo, Repo };
 
-export const Repos = {
-    InternalGitlab: "gl",
-    OpenXRDocs: "gh.OpenXR-Docs",
-    OpenXRSDKSource: "gh.OpenXR-SDK-Source",
-    OpenXRCTS: "gh.OpenXR-CTS",
+/**
+ * Convenience object containing the repos by name.
+ */
+export const Repos: { [index in string]: Repo } = {
+    InternalGitlab: 'gl',
+    OpenXRDocs: 'gh.OpenXR-Docs',
+    OpenXRSDKSource: 'gh.OpenXR-SDK-Source',
+    OpenXRCTS: 'gh.OpenXR-CTS',
 } as const;
 
-const subdir = {
-    [RefTypes.Issue]: 'issues',
-    [RefTypes.PullRequest]: 'pull',
-    [RefTypes.MergeRequest]: 'merge_requests',
+export type GitHubRefType = 'issue' | 'pr';
+export type GitLabRefType = 'issue' | 'mr';
+export type RefType = GitHubRefType | GitLabRefType;
+
+
+export const RefTypes: { [index: string]: RefType } = {
+    Issue: 'issue',
+    PullRequest: 'pr',
+    MergeRequest: 'mr'
+} as const;
+
+export const RefTypeHumanName: { [index in RefType]: string } = {
+    issue: 'Issue',
+    pr: 'Pull Request',
+    mr: 'Merge Request'
+} as const;
+
+const subdir: { [index in RefType]: string } = {
+    issue: 'issues',
+    pr: 'pull',
+    mr: 'merge_requests',
 } as const;;
 
-// type GitHubRepo = Repo.OpenXRDocs | Repo.OpenXRSDKSource | Repo.OpenXRCTS
-export type GitHubRefType = "Issue" | "Pull Request";
-export type GitLabRefType = "Issue" | "Merge Request";
-export type RefType = GitHubRefType | GitLabRefType;
-// export type { GitHubRefType, GitLabRefType, RefType };
-
-function getGithubRepoName(repo: GitHubRepo) {
+function getGithubRepoName(repo: GitHubRepo): string {
     return repo.replace('gh.', '');
 }
 
-export const RepoHumanName = {
-    [Repos.InternalGitlab]: 'Khronos internal OpenXR repo',
-    [Repos.OpenXRDocs]: `GitHub repo ${getGithubRepoName(Repos.OpenXRDocs)}`,
-    [Repos.OpenXRSDKSource]: `GitHub repo ${getGithubRepoName(Repos.OpenXRSDKSource)}`,
-    [Repos.OpenXRCTS]: `GitHub repo ${getGithubRepoName(Repos.OpenXRCTS)}`,
+export const RepoHumanName: { [index in Repo]: string } = {
+    ['gl']: 'Khronos internal OpenXR repo',
+    ['gh.OpenXR-Docs']: `GitHub repo ${getGithubRepoName('gh.OpenXR-Docs')}`,
+    ['gh.OpenXR-SDK-Source']: `GitHub repo ${getGithubRepoName('gh.OpenXR-SDK-Source')}`,
+    ['gh.OpenXR-CTS']: `GitHub repo ${getGithubRepoName('gh.OpenXR-CTS')}`,
 } as const;
 
 const khronosGithubBase = 'https://github.com/KhronosGroup/';
 
-const baseUrls = {
-    [Repos.InternalGitlab]: "https://gitlab.khronos.org/openxr/openxr",
-    [Repos.OpenXRDocs]: khronosGithubBase + getGithubRepoName(Repos.OpenXRDocs),
-    [Repos.OpenXRSDKSource]: khronosGithubBase + getGithubRepoName(Repos.OpenXRSDKSource),
-    [Repos.OpenXRCTS]: khronosGithubBase + getGithubRepoName(Repos.OpenXRCTS),
+const baseUrls: { [index in Repo]: string } = {
+    ['gl']: 'https://gitlab.khronos.org/openxr/openxr',
+    ['gh.OpenXR-Docs']: khronosGithubBase + getGithubRepoName('gh.OpenXR-Docs'),
+    ['gh.OpenXR-SDK-Source']: khronosGithubBase + getGithubRepoName('gh.OpenXR-SDK-Source'),
+    ['gh.OpenXR-CTS']: khronosGithubBase + getGithubRepoName('gh.OpenXR-CTS'),
 } as const;
 
-export const CodeChangeRefType = {
-    [Repos.InternalGitlab]: RefTypes.MergeRequest,
-    [Repos.OpenXRDocs]: RefTypes.PullRequest,
-    [Repos.OpenXRSDKSource]: RefTypes.PullRequest,
-    [Repos.OpenXRCTS]: RefTypes.PullRequest,
-} as const;;
+/**
+ * Reference type that indicates a code change (not an issue) for each repo type.
+ */
+export const CodeChangeRefType: { [index in Repo]: RefType } = {
+    ['gl']: 'mr',
+    ['gh.OpenXR-Docs']: 'pr',
+    ['gh.OpenXR-SDK-Source']: 'pr',
+    ['gh.OpenXR-CTS']: 'pr',
+} as const;
 
-// export const CodeChangeRefType = (()=>{
-//     return Object.fromEntries()
-// })();
-
+/**
+ * A reference valid for GitLab
+ */
 export interface GitLabReference {
     repo: GitLabRepo,
     refType: GitLabRefType,
-    refNumber: number
+    refNumber: number,
+    suffix?: string,
 };
 
+/**
+ * A reference valid for a GitHub repo
+ */
 export interface GitHubReference {
     repo: GitHubRepo,
     refType: GitHubRefType,
-    refNumber: number
+    refNumber: number,
+    suffix?: string,
 }
 
+/**
+ * A type that only accepts valid GitHub or GitLab references.
+ * 
+ * (Won't let you mix merge requests and github, etc.)
+ */
 export type StrictGeneralReference = GitHubReference | GitLabReference;
 
-export interface GeneralReference {
-    repo: Repo,
-    refType: RefType,
-    refNumber: number
-}
+// export interface GeneralReference {
+//     repo: Repo,
+//     refType: RefType,
+//     refNumber: number
+// }
 
+/**
+ * A substantially looser type that StrictGeneralReference: doesn't have to be complete or valid.
+ */
 export interface PartialReference {
-    repo: Repo | null | undefined,
-    refType: RefType | null | undefined,
-    refNumber: number | null | undefined,
+    repo?: Repo | null | undefined,
+    refType?: RefType | null | undefined,
+    refNumber?: number | null | undefined,
+    suffix?: string | null | undefined,
 }
 
+/**
+ * An array of all repos, for iteration purposes
+ */
 export const AllRepos = Object.values(Repos);
 
 export const getMostSimilarRefTypeForRepo = (repo: Repo, origRefType: RefType): RefType =>
-    (origRefType == RefTypes.MergeRequest || origRefType == RefTypes.PullRequest)
+    (origRefType == 'mr' || origRefType == 'pr')
         ? CodeChangeRefType[repo]
-        : RefTypes.Issue;
+        : 'issue';
 
-const githubRefTypes = new Set<GitHubRefType>([RefTypes.Issue, RefTypes.PullRequest]);
+const githubRefTypes = new Set<GitHubRefType>(['issue', 'pr']);
 
-const gitlabRefTypes = new Set<GitLabRefType>([RefTypes.Issue, RefTypes.MergeRequest]);
+const gitlabRefTypes = new Set<GitLabRefType>(['issue', 'mr']);
 
-// const getValidRefTypesForRepo =
-//     (repo: Repo): Set<RefType> => (repo == Repos.InternalGitlab) ? gitlabRefTypes : githubRefTypes;
-
-// export const ValidRefTypes: Map<Repo, Set<RefType>> = (() => {
-//     return new Map<Repo, Set<RefType>>(
-//         AllRepos.map((r) =>
-//             [r, (r == Repos.InternalGitlab) ? gitlabRefTypes : githubRefTypes])
-//     );
-// })()
+/**
+ * The set of RefType values valid for a given Repo.
+ * 
+ * Note that if you're already using StrictGeneralReference, you don't need this.
+ */
 export const ValidRefTypes: { [index in Repo]: Set<RefType> } = (() => {
     let pairs: Array<[Repo, Set<RefType>]> = AllRepos.map((r) =>
         [r, (r == 'gl') ? gitlabRefTypes : githubRefTypes]);
@@ -128,48 +154,34 @@ export function isReferenceValid(ref: PartialReference): boolean {
     return ValidRefTypes[ref.repo].has(ref.refType);
 }
 
+export function normalizeReference(ref: PartialReference): StrictGeneralReference | null {
+    if (isReferenceValid(ref)) {
+        return {
+            repo: ref.repo ,
+            refType: ref.refType,
+            refNumber: ref.refNumber,
+            suffix: ref.suffix,
+        } as StrictGeneralReference;
+    }
+    return null
+}
+
+/**
+ * Make the URL that will be linked in a changelog.
+ * @param ref A valid reference
+ */
 export function makeUrl(ref: StrictGeneralReference): string {
     return `${baseUrls[ref.repo]}/${subdir[ref.refType]}/${ref.refNumber}`;
 }
 
+/**
+ * Make the reference string to use for a filename or in the front matter.
+ * @param ref A valid reference
+ */
 export function makeRefString(ref: StrictGeneralReference): string {
-    return `${ref.refType}.${ref.refNumber}.${ref.repo}`;
+    let baseString = `${ref.refType}.${ref.refNumber}.${ref.repo}`;
+    if (ref.hasOwnProperty('suffix') && ref.suffix) {
+        return `${baseString}.${ref.suffix}`;
+    }
+    return baseString;
 }
-
-// export class Reference {
-//     private _repo: Repo;
-//     get repo(): Repo {
-//         return this._repo;
-//     }
-//     set repo(newRepo: Repo) {
-//         if (!getValidRefTypesForRepo(newRepo).has(this._refType)) {
-//             throw new Error(`Cannot set repo to ${newRepo} when refType is ${this.refType}`);
-//         }
-//         this._repo = newRepo;
-//     }
-
-//     private _refType: RefType;
-//     get refType(): RefType {
-//         return this._refType;
-//     }
-//     set refType(newRefType: RefType) {
-//         if (!getValidRefTypesForRepo(this.repo).has(newRefType)) {
-//             throw new Error(`Cannot set refType to ${newRefType} when repo is ${this.repo}`);
-//         }
-//         this._refType = newRefType;
-//     }
-
-//     refNumber: number;
-
-
-//     constructor(repo: Repo, refType: RefType, refNumber: number) {
-//         this.repo = repo;
-//         this.refType = refType;
-//         this.refNumber = refNumber;
-//         if (!getValidRefTypesForRepo(repo).has(this.refType)) {
-//             throw new Error(`Cannot set repo to ${repo} and refType to ${refType}`)
-//         }
-//     }
-
-
-// }

@@ -3,31 +3,28 @@
 
   const dispatch = createEventDispatcher();
 
-  import {
-isReferenceValid,
-    RepoHumanName,
-    // Reference,
-  } from "./shared/reference";
+  import { RepoHumanName, RefTypeHumanName } from "./shared/reference";
 
-  import type { Repo, RefType , PartialReference} from "./shared/reference";
-  // export let repo: Repo;
-  // export let refType: RefType;
-  // export let refNumber: number;
-  export let ref: PartialReference = {repo: null, refType: null, refNumber: null};
+  import type { StrictGeneralReference } from "./shared/reference";
+  export let ref: StrictGeneralReference | null = null;
   export let editable = true;
 
   function sendEditMessage() {
     console.log("dispatching edit event:", ref);
-    dispatch("edit", {ref});
+    dispatch("edit", { ref });
   }
 </script>
-{#if ref.repo}
-<span class="repo">{RepoHumanName[ref.repo]}</span>
-<span class="refType">{ref.refType}</span>
-<span class="refNumber">{ref.refNumber}</span>
+
+{#if ref}
+  <span class="repo">{RepoHumanName[ref.repo]}</span>
+  <span class="refType">{RefTypeHumanName[ref.refType]}</span>
+  <span class="refNumber">{ref.refNumber}</span>
+  {#if ref.suffix}
+  <span class="refSuffix">({ref.suffix})</span>
+  {/if}
 {:else}
-<span class="warning">reference not valid</span>
+  <span class="warning">reference not valid</span>
 {/if}
 {#if editable}
-<button on:click={sendEditMessage}>Edit</button>
+  <button on:click={sendEditMessage}>Edit</button>
 {/if}
