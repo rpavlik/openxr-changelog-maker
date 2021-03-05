@@ -11,27 +11,31 @@
   let ref: PartialReference;
 
   interface ComponentAndProps {
-      component: SvelteComponent,
-      props: object,
+    component: SvelteComponent;
+    props: object;
+  }
+  let editorProps = {
+    codeChangeOnly,
+    ref,
+    submittable: submittable && editable,
+  };
+  let viewerProps = {
+    editable,
+    ref,
   };
   let components = new Map<boolean, ComponentAndProps>([
     [
       true,
       {
         component: RefEditable,
-        props: {
-            codeChangeOnly,
-            submittable: submittable && editable
-        }
+        props: editorProps,
       },
     ],
     [
       false,
       {
         component: RefView,
-        props: {
-            editable
-        }
+        props: viewerProps,
       },
     ],
   ]);
@@ -42,8 +46,21 @@
   }
 
   function handleSave(event) {
-      
+    ref = event.detail.ref;
+    editing = false;
+    viewerProps.ref = {...ref};
+  }
+  function handleEdit(event) {
+    ref = event.detail.ref;
+    editing = true;
+    editorProps.ref = {...ref};
   }
 </script>
 
-<svelte:component this={active.component} {...active.props}  {...ref} on:saved={handleSave} />
+<svelte:component
+  this={active.component}
+  {...active.props}
+  {ref}
+  on:edit={handleEdit}
+  on:saved={handleSave}
+/>

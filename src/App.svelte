@@ -15,7 +15,7 @@
   <p>
     Where is your change being submitted?
   </p>
-  <Ref codeChangeOnly={true} {repo} />
+  <Ref codeChangeOnly={true} />
 </main>
 
 <style>

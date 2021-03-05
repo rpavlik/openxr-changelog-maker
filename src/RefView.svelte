@@ -4,24 +4,30 @@
   const dispatch = createEventDispatcher();
 
   import {
+isReferenceValid,
     RepoHumanName,
     // Reference,
   } from "./shared/reference";
 
-  import type { Repo, RefType } from "./shared/reference";
-  export let repo: Repo;
-  export let refType: RefType;
-  export let refNumber: number;
+  import type { Repo, RefType , PartialReference} from "./shared/reference";
+  // export let repo: Repo;
+  // export let refType: RefType;
+  // export let refNumber: number;
+  export let ref: PartialReference = {repo: null, refType: null, refNumber: null};
   export let editable = true;
 
   function sendEditMessage() {
-    dispatch("edit", { repo, refType, refNumber });
+    console.log("dispatching edit event:", ref);
+    dispatch("edit", {ref});
   }
 </script>
-
-<span class="repo">{RepoHumanName[repo]}</span>
-<span class="refType">{refType}</span>
-<span class="refNumber">{refNumber}</span>
+{#if ref.repo}
+<span class="repo">{RepoHumanName[ref.repo]}</span>
+<span class="refType">{ref.refType}</span>
+<span class="refNumber">{ref.refNumber}</span>
+{:else}
+<span class="warning">reference not valid</span>
+{/if}
 {#if editable}
 <button on:click={sendEditMessage}>Edit</button>
 {/if}
