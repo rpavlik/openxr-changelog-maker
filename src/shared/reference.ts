@@ -87,9 +87,9 @@ export interface GeneralReference {
 }
 
 export interface PartialReference {
-    repo: Repo | null,
-    refType: RefType | null,
-    refNumber: number | null
+    repo: Repo | null | undefined,
+    refType: RefType | null | undefined,
+    refNumber: number | null | undefined,
 }
 
 export const AllRepos = Object.values(Repos);
@@ -118,7 +118,10 @@ export const ValidRefTypes: { [index in Repo]: Set<RefType> } = (() => {
     return Object.fromEntries(pairs) as { [index in Repo]: Set<RefType> };
 })();
 
-export function isReferenceValid (ref: PartialReference): boolean {
+export function isReferenceValid(ref: PartialReference): boolean {
+    if (!ref.hasOwnProperty('repo') || !ref.hasOwnProperty('refType') || !ref.hasOwnProperty('refNumber')) {
+        return false;
+    }
     if (!ref.repo || !ref.refType || !ref.refNumber) {
         return false;
     }
