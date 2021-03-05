@@ -9,21 +9,18 @@
     CodeChangeRefType,
     RefTypes,
     ValidRefTypes,
-  } from "../modules/openxr-changelog-reference";
+    isReferenceValid
+  } from "./shared/reference";
 
-  import type { Repo, RefType } from "../modules/openxr-changelog-reference";
+  import type { Repo, RefType } from "./shared/reference";
   export let codeChangeOnly: boolean = false;
   export let repo: Repo | null = null;
   export let submittable: boolean = true;
   let refType: RefType | null;
 
   let valid: boolean = false;
-  $: {
-    if (!repo || !refType || !refNumber) {
-      valid = false;
-    }
-    valid = ValidRefTypes[repo].has(refType);
-  }
+  $: valid = isReferenceValid({repo, refType, refNumber})
+  
   let refNumber: number | null = null;
 
   function save() {

@@ -2,10 +2,11 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc -b && rollup -c",
-    "dev": "tsc -b && rollup -c -w",
-    "start": "tsc -b && sirv public",
-    "validate": "tsc -b && svelte-check"
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "start": "sirv public",
+    "validate": "svelte-check",
+    "test": "jest"
   },
   "browserslist": [
     "defaults"
@@ -13,7 +14,6 @@
   "eslintConfig": {
     "parser": "@typescript-eslint/parser",
     "extends": [
-      "preact",
       "plugin:@typescript-eslint/recommended"
     ],
     "ignorePatterns": [
@@ -47,7 +47,6 @@
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-livereload": "^2.0.0",
-    "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-postcss": "^4.0.0",
     "rollup-plugin-styles": "^3.14.1",
     "rollup-plugin-svelte": "^7.0.0",
